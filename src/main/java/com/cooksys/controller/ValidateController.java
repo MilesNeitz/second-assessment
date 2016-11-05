@@ -2,12 +2,9 @@ package com.cooksys.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cooksys.entity.Hashtag;
-import com.cooksys.entity.User;
 import com.cooksys.service.TweetService;
 import com.cooksys.service.UserService;
 
@@ -25,17 +22,17 @@ public class ValidateController {
 	}
 	
 	@GetMapping("/tag/exists/{label}")
-	public boolean checkTag(@PathVariable Hashtag hashtag) {
-		return (hashtag != null);
+	public boolean checkTag(@PathVariable String label) {
+		return tweetService.findLabel(label.replace("{", "").replace("}", ""));
 	}
 	
-	@GetMapping("/username/exists/@{user}")
-	public String checkExists(@RequestBody String user) {
-		return (user);
-	}
 	@GetMapping("/username/available/@{username}")
-	public boolean checkAvaiable(@RequestBody User user) {
-		return (user == null);
+	public boolean checkAvaiable(@PathVariable String username) {
+		return !userService.findUser(username.replace("{", "").replace("}", ""));
+	}
+	@GetMapping("/username/exists/@{username}")
+	public boolean checkExists(@PathVariable String username) {
+		return userService.findUser(username.replace("{", "").replace("}", ""));
 	}
 	
 	

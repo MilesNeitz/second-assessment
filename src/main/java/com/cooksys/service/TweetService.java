@@ -1,5 +1,7 @@
 package com.cooksys.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.cooksys.entity.Context;
@@ -34,16 +36,36 @@ public class TweetService {
 		return contextRepo.getOne(id);
 	}
 
-	public void addTweet(Tweet tweet) {
-		tweetRepo.saveAndFlush(tweet);
+	public Tweet addTweet(Tweet tweet) {
+		return tweetRepo.saveAndFlush(tweet);
 	}
 	
-	public void addHashtag(Hashtag hashtag) {
-		hashtagRepo.saveAndFlush(hashtag);
+	public Hashtag addHashtag(Hashtag hashtag) {
+		return hashtagRepo.saveAndFlush(hashtag);
 	}
 	
-	public void addContext(Context context) {
-		contextRepo.saveAndFlush(context);
+	public Context addContext(Context context) {
+		return contextRepo.saveAndFlush(context);
+	}
+
+	public boolean findLabel(String label) {
+		return (hashtagRepo.findByLabel(label) != null);
+	}
+
+	public List<Hashtag> findAll() {
+		return hashtagRepo.findAll();
+	}
+
+	public List<Tweet> findAllTweets() {
+		return tweetRepo.findAll();
+	}
+
+	public List<Hashtag> findAllHashtags() {
+		return hashtagRepo.findAll();
+	}
+	
+	public Hashtag findHashtag(String label) {
+		return hashtagRepo.findByLabel(label);
 	}
 	
 }

@@ -3,44 +3,46 @@ package com.cooksys.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cooksys.classes.NewTweet;
+import com.cooksys.entity.Tweet;
 import com.cooksys.entity.User;
-import com.cooksys.projection.UserProjection;
 import com.cooksys.service.TweetService;
 import com.cooksys.service.UserService;
 
 @RestController
-@RequestMapping("users")
-public class UsersController {
+@RequestMapping("tweets")
+public class TweetsController {
 	
 	TweetService tweetService;
 	
 	UserService userService;
 	
-	public UsersController(TweetService tweetService, UserService userService) {
+	public TweetsController(TweetService tweetService, UserService userService) {
 		this.tweetService = tweetService;
 		this.userService = userService;
 	}
 	
 	@GetMapping()
-	public List<User> getUsers() {
-		return userService.findAll();
+	public List<Tweet> getTweets() {
+		return tweetService.findAllTweets();
 	}
-	
-	@GetMapping("/@{username}")
-	public UserProjection getUser(@PathVariable String username) {
-		return userService.find(username.replace("{", "").replace("}", ""));
-	}
-	
 	
 	@PostMapping()
-	public User postUsers(@RequestBody User user) {
-		return userService.add(user);
+	public Tweet postTweet(@RequestBody NewTweet newTweet) {
+		Tweet tweet = new Tweet();
+		// case sensitive 
+		
+		User author = userService.checkPassword(newTweet.getUsername(), newTweet.getPassword());
+		if (author != null) {
+			tweet.setContent(newTweet.getContent());
+			tweet.setAuthor(author);
+		}
+		
+		return tweetService.addTweet(tweet);
 	}
-	
 }
