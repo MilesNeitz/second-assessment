@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cooksys.service.HashtagService;
 import com.cooksys.service.TweetService;
 import com.cooksys.service.UserService;
 
@@ -13,6 +14,8 @@ import com.cooksys.service.UserService;
 public class ValidateController {
 	
 	TweetService tweetService;
+	
+	HashtagService hashtagService;
 	
 	UserService userService;
 	
@@ -23,7 +26,7 @@ public class ValidateController {
 	
 	@GetMapping("/tag/exists/{label}")
 	public boolean checkTag(@PathVariable String label) {
-		return tweetService.findLabel(label.replace("{", "").replace("}", ""));
+		return hashtagService.findLabel(label.replace("{", "").replace("}", ""));
 	}
 	
 	@GetMapping("/username/available/@{username}")

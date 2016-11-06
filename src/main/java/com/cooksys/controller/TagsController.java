@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.entity.Hashtag;
+import com.cooksys.service.HashtagService;
 import com.cooksys.service.TweetService;
 import com.cooksys.service.UserService;
 
@@ -17,20 +18,23 @@ public class TagsController {
 	
 	TweetService tweetService;
 	
+	HashtagService hashtagService;
+	
 	UserService userService;
 	
-	public TagsController(TweetService tweetService, UserService userService) {
+	public TagsController(TweetService tweetService, UserService userService, HashtagService hashtagService) {
 		this.tweetService = tweetService;
 		this.userService = userService;
+		this.hashtagService = hashtagService;
 	}
 	
 	@GetMapping()
 	public List<Hashtag> getHashtags() {
-		return tweetService.findAllHashtags();
+		return hashtagService.findAll();
 	}	
 	
 	@GetMapping("/@{label}")
 	public Hashtag getHashtag(@PathVariable String label) {
-		return tweetService.findHashtag(label.replace("{", "").replace("}", ""));
+		return hashtagService.checkHashtag(label.replace("{", "").replace("}", ""));
 	}
 }

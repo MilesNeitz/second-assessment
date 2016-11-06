@@ -6,6 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class User {
@@ -14,16 +19,21 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotNull
 	private String username;
 	
+	@CreationTimestamp
 	private	Timestamp joined;
 	
+	@NotNull
+	@JsonIgnore
 	private String password;
 	
 	private String firstName;
 	
 	private String lastName;
 	
+	@NotNull
 	private String email;
 	
 	private String phone;

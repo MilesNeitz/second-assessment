@@ -6,6 +6,6 @@ import com.cooksys.entity.Hashtag;
 
 public interface HashtagRepo extends JpaRepository<Hashtag, Long>{
 
-	Hashtag findByLabel(String label);
+	Hashtag findByName(String name);
 	
 }
