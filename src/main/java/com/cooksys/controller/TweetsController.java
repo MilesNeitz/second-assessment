@@ -41,7 +41,47 @@ public class TweetsController {
 	
 	@GetMapping("/{id}")
 	public Tweet getTweet(@PathVariable Long id) {
-		return tweetService.getTweet((long) 1);
+		return tweetService.getTweet(id);
+	}
+	
+	@GetMapping("/{id}/tags")
+	public List<Hashtag> getTags(@PathVariable Long id) {
+		return (tweetService.getTweet(id)).getTaged();
+	}
+	
+	@GetMapping("/{id}/likes")
+	public List<User> getLikes(@PathVariable Long id) {
+		return (tweetService.getTweet(id)).getLikes();
+	}
+	
+	@GetMapping("/{id}/context")
+	public String getContext(@PathVariable Long id) {
+		return (tweetService.getTweet(id)).getContent();
+	}
+	
+	@GetMapping("/{id}/replies")
+	public List<Tweet> getReplys(@PathVariable Long id) {
+		Tweet tweet = tweetService.getTweet(id);
+		List<Tweet> replies = tweetService.getInReplyTo(tweet);
+		if (replies == null) {
+			//give error
+		}
+		return replies;
+	}
+	
+	@GetMapping("/{id}/reposts")
+	public List<Tweet> getReposts(@PathVariable Long id) {
+		Tweet tweet = tweetService.getTweet(id);
+		List<Tweet> reposts = tweetService.getRepostOf(tweet);
+		if (reposts == null) {
+			//give error
+		}
+		return reposts;
+	}
+	
+	@GetMapping("/{id}/mentions")
+	public List<User> getMentions(@PathVariable Long id) {
+		return (tweetService.getTweet(id)).getMentioned();
 	}
 	
 	@PostMapping("/{id}/like")
@@ -68,37 +108,113 @@ public class TweetsController {
 	
 	// case sensitive 
 	@PostMapping()
-	public Tweet postTweet(@RequestBody NewTweet newTweet) {
+	public Tweet postSimpleTweet(@RequestBody NewTweet newTweet) {
 		Tweet tweet = new Tweet();
 		
 		User author = userService.checkPassword(newTweet.getUsername(), newTweet.getPassword());
 		if (author != null) {
 			tweet.setContent(newTweet.getContent());
 			tweet.setAuthor(author);
-			String[] contents = newTweet.getContent().split("\\s+");
-			for (String content : contents) {
-	            if (content.substring(0, 1).equals("@")) {
-	            		
-	            }
-	            if (content.substring(0, 1).equals("#")) {
-	            	Hashtag hashtag = hashtagService.checkHashtag(content);
-	            	
-	            	if (hashtag != null) {
-            			hashtag = hashtagService.checkHashtag(content);
-	            		tweet.addTaged(hashtag);	            	
-	            	}
-	            	else {
-	            		hashtag = new Hashtag();
-	            		hashtag.setName(content);
-	            		hashtagService.addHashtag(hashtag);
-	            		List<Hashtag> hashtags = new ArrayList<Hashtag>();
-	            		hashtags.add(hashtag);
-	            		tweet.setTaged(hashtags);
-	            	}
-	            }
-	        }
+			
+			tweet = sortContent(newTweet,tweet);
+		}
+		else {
+			//give error
 		}
 		tweet = tweetService.addTweet(tweet);
+		return tweet;
+	}
+	
+	@PostMapping("/{id}/reply")
+	public Tweet postReplyTweet(@PathVariable Long id, @RequestBody NewTweet newTweet) {
+		
+		Tweet tweet = new Tweet();
+		
+		User author = userService.checkPassword(newTweet.getUsername(), newTweet.getPassword());
+		if (author != null) {
+			tweet.setContent(newTweet.getContent());
+			tweet.setAuthor(author);
+			Tweet replyedTweet = tweetService.getTweet(id);
+			if (replyedTweet != null) {
+				tweet.setInReplyTo(replyedTweet);
+			}
+			else {
+				// give error
+			}
+			tweet = sortContent(newTweet,tweet);
+		}
+		else {
+			//give error
+		}
+		tweet = tweetService.addTweet(tweet);
+		return tweet;
+	}
+	
+	@PostMapping("/{id}/repost")
+	public Tweet postRepostTweet(@PathVariable Long id, @RequestBody NewTweet newTweet) {
+		
+		Tweet tweet = new Tweet();
+		
+		User author = userService.checkPassword(newTweet.getUsername(), newTweet.getPassword());
+		if (author != null) {
+			tweet.setAuthor(author);
+			Tweet repostedTweet = tweetService.getTweet(id);
+			if (repostedTweet != null) {
+				tweet.setRepostOf(repostedTweet);
+			}
+			else {
+				// give error
+			}
+			tweet = sortContent(newTweet,tweet);
+		}
+		else {
+			// give error
+		}
+		tweet = tweetService.addTweet(tweet);
+		return tweet;
+	}
+	
+	private Tweet sortContent(NewTweet newTweet, Tweet tweet){
+		String[] contents = newTweet.getContent().split("\\s+");
+		for (String content : contents) {
+			// make mentions for each string starting with @
+            if (content.substring(0, 1).equals("@")) {
+            	User user = userService.getUserByUsername(content.substring(1));
+            	
+            	if (user == null) {
+            		
+            	}
+            	
+            	List<User> Mentions = tweet.getMentioned();
+            	
+        		if (Mentions == null) {
+        			Mentions = new ArrayList<User>();            	
+            	}
+        		
+        		Mentions.add(user);
+        		tweet.setMention(Mentions); 	
+            }
+            
+            // make hashtags for each string starting with #
+            if (content.substring(0, 1).equals("#")) {
+            	Hashtag hashtag = hashtagService.checkHashtag(content);
+            	
+            	if (hashtag == null) {
+            		hashtag = new Hashtag();
+            		hashtag.setName(content);
+            		hashtagService.addHashtag(hashtag);
+            	}
+            	
+            	List<Hashtag> hashtags = tweet.getTaged();
+            	
+        		if (hashtags == null) {
+        			hashtags = new ArrayList<Hashtag>();            	
+            	}
+        		
+        		hashtags.add(hashtag);
+        		tweet.setTaged(hashtags);       	
+            }
+        }
 		return tweet;
 	}
 }

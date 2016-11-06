@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.cooksys.entity.User;
-import com.cooksys.projection.UserProjection;
 import com.cooksys.repository.UserRepo;
 
 @Service
@@ -25,7 +24,7 @@ public class UserService {
 		return userRepo.findByUsername(username) != null;
 	}
 	
-	public UserProjection find(String username) {
+	public User find(String username) {
 		return userRepo.findByUsername(username);
 	}
 	
@@ -39,6 +38,10 @@ public class UserService {
 
 	public User checkPassword(String username, String password) {
 		return userRepo.findByUsernameAndPassword(username, password);
+	}
+
+	public User getUserByUsername(String username) {
+		return userRepo.findByUsername(username);
 	}
 	
 }

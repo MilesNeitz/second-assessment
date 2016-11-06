@@ -39,6 +39,9 @@ public class Tweet {
 	private List<Hashtag> hashtags;
 	
 	@ManyToMany
+	private List<User> mentions;
+	
+	@ManyToMany
 	private List<User> likes;
 
 	public List<User> getLikes() {
@@ -111,6 +114,14 @@ public class Tweet {
 	
 	public void addTaged(Hashtag hashtag) {
 		this.hashtags.add(hashtag);
+	}
+
+	public List<User> getMentioned() {
+		return mentions;
+	}
+
+	public void setMention(List<User> mentions) {
+		this.mentions = mentions;
 	}
 
 }

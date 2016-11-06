@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.entity.User;
-import com.cooksys.projection.UserProjection;
 import com.cooksys.service.TweetService;
 import com.cooksys.service.UserService;
 
@@ -33,7 +32,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/@{username}")
-	public UserProjection getUser(@PathVariable String username) {
+	public User getUser(@PathVariable String username) {
 		return userService.find(username.replace("{", "").replace("}", ""));
 	}
 	

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.cooksys.entity.Context;
 import com.cooksys.entity.Tweet;
+import com.cooksys.entity.User;
 import com.cooksys.repository.ContextRepo;
 import com.cooksys.repository.TweetRepo;
 
@@ -40,7 +41,13 @@ public class TweetService {
 	public List<Tweet> findAllTweets() {
 		return tweetRepo.findAll();
 	}
-	
 
-	
+	public List<Tweet> getInReplyTo(Tweet tweet) {
+		return tweetRepo.findByInReplyTo(tweet);
+	}
+
+	public List<Tweet> getRepostOf(Tweet tweet) {
+		return tweetRepo.findByRepostOf(tweet);
+	}
+
 }

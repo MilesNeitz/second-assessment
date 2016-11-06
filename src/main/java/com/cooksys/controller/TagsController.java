@@ -33,7 +33,7 @@ public class TagsController {
 		return hashtagService.findAll();
 	}	
 	
-	@GetMapping("/@{label}")
+	@GetMapping("/{label}")
 	public Hashtag getHashtag(@PathVariable String label) {
 		return hashtagService.checkHashtag(label.replace("{", "").replace("}", ""));
 	}
