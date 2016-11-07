@@ -1,11 +1,13 @@
 package com.cooksys.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -37,6 +39,10 @@ public class User {
 	private String email;
 	
 	private String phone;
+	
+	@JsonIgnore
+	@ManyToMany
+	private List<User> following;
 
 	public Long getId() {
 		return id;
@@ -100,6 +106,14 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public List<User> getFollowing() {
+		return following;
+	}
+
+	public void setFollowing(List<User> following) {
+		this.following = following;
 	}
 
 	
