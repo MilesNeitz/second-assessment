@@ -44,7 +44,7 @@ public class Tweet implements Comparable<Tweet>  {
 	@ManyToMany
 	private List<User> likes;
 	
-	private Boolean deleted = false;
+	private Boolean deleted;
 	
 	@Override     
 	public int compareTo(Tweet tweet) {
@@ -133,10 +133,12 @@ public class Tweet implements Comparable<Tweet>  {
 	}
 
 	public Boolean getDeleted() {
+		if (this.deleted == null) this.deleted = false;
 		return deleted;
 	}
 
 	public void setDeleted(Boolean deleted) {
+		if (deleted == null) this.deleted = false;
 		this.deleted = deleted;
 	}
 

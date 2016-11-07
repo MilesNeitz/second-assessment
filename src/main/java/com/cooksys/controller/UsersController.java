@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,14 +47,19 @@ public class UsersController {
 	
 	@GetMapping("/@{username}/followers")
 	public List<User> getFollowers(@PathVariable String username) {
-		User user = userService.find(username);
-		return userService.findByFollowing(user);
+		User followed = userService.find(username);
+		List<User> users = userService.findByFollowing(followed);
+		users.removeIf(user -> user.getDeleted());
+		return users;
+		
 	}
 	
 	@GetMapping("/@{username}/following")
 	public List<User> getFollowing(@PathVariable String username) {
-		User user = userService.find(username);
-		return user.getFollowing();
+		User follower = userService.find(username);
+		List<User> users = follower.getFollowing();
+		users.removeIf(user -> user.getDeleted());
+		return users;
 	}
 	
 	@GetMapping("@{username}/feed")
@@ -62,7 +68,8 @@ public class UsersController {
 		List<User> followers = user.getFollowing();
 		List<Tweet> tweets = tweetService.findByAuthor(user);
 		for (User follower : followers) {
-			tweets.addAll(tweetService.findByAuthor(follower));
+			if (!follower.getDeleted()) tweets.addAll(tweetService.findByAuthor(follower));
+			tweets.removeIf(tweet -> tweet.getDeleted());
 		}
 		Collections.sort(tweets);
 		return tweets;
@@ -122,13 +129,23 @@ public class UsersController {
 	}
 	
 	@PatchMapping("/@{username}")
-	public User postSimpleTweet(@RequestBody PatchUser patchUser) {
+	public User patchUser(@RequestBody PatchUser patchUser) {
 		User user = userService.checkPassword(patchUser.getUsername(), patchUser.getPassword());
 		if (user != null){
 			if (patchUser.getFirstName() != null) user.setFirstName(patchUser.getFirstName());
 			if (patchUser.getLastName() != null) user.setLastName(patchUser.getLastName());
 			if (patchUser.getEmail() != null) user.setEmail(patchUser.getEmail());
 			if (patchUser.getPhone() != null) user.setPhone(patchUser.getPhone());
+			user = userService.add(user);
+		}
+		return user;
+	}
+	
+	@DeleteMapping("/@{username}")
+	public User deleteUser(@RequestBody PatchUser patchUser) {
+		User user = userService.checkPassword(patchUser.getUsername(), patchUser.getPassword());
+		if (user != null){
+			user.setDeleted(true);
 			user = userService.add(user);
 		}
 		return user;
