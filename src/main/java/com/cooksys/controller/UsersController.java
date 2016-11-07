@@ -1,6 +1,7 @@
 package com.cooksys.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.classes.NewTweet;
+import com.cooksys.entity.Tweet;
 import com.cooksys.entity.User;
 import com.cooksys.service.TweetService;
 import com.cooksys.service.UserService;
@@ -42,6 +44,18 @@ public class UsersController {
 	public List<User> getFollowers(@PathVariable String username) {
 		User user = userService.find(username);
 		return user.getFollowing();
+	}
+	
+	@GetMapping("@{username}/feed")
+	public List<Tweet> getFeed(@PathVariable String username) {
+		User user = userService.find(username);
+		List<User> followers = user.getFollowing();
+		List<Tweet> tweets = tweetService.findByAuthor(user);
+		for (User follower : followers) {
+			tweets.addAll(tweetService.findByAuthor(follower));
+		}
+		Collections.sort(tweets);
+		return tweets;
 	}
 	
 	@PostMapping()

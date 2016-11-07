@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-public class Tweet {
+public class Tweet implements Comparable<Tweet>  {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +43,12 @@ public class Tweet {
 	
 	@ManyToMany
 	private List<User> likes;
+	
+	@Override     
+	public int compareTo(Tweet tweet) {
+		// a nested if statement to return -1 if before then time 0 if same time and 1 if after
+		return (this.getPosted().before(tweet.getPosted()) ? -1 : (this.getPosted().equals(tweet.getPosted()) ? 0 : 1));     
+	}  
 
 	public List<User> getLikes() {
 		return likes;

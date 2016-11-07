@@ -50,4 +50,8 @@ public class TweetService {
 		return tweetRepo.findByRepostOf(tweet);
 	}
 
+	public List<Tweet> findByAuthor(User user) {
+		return tweetRepo.findByAuthor(user);
+	}
+
 }
