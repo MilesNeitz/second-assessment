@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public class User {
@@ -39,6 +40,8 @@ public class User {
 	private String email;
 	
 	private String phone;
+	
+	private Boolean deleted;
 	
 	@JsonIgnore
 	@ManyToMany
@@ -99,11 +102,13 @@ public class User {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
+	
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
-
+	
+	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -114,6 +119,16 @@ public class User {
 
 	public void setFollowing(List<User> following) {
 		this.following = following;
+	}
+
+	public Boolean getDeleted() {
+		if (this.deleted == null) this.deleted = false;
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		if (deleted == null) this.deleted = false;
+		this.deleted = deleted;
 	}
 
 	

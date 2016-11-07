@@ -26,16 +26,16 @@ public class ValidateController {
 	
 	@GetMapping("/tag/exists/{label}")
 	public boolean checkTag(@PathVariable String label) {
-		return hashtagService.findLabel(label.replace("{", "").replace("}", ""));
+		return hashtagService.findLabel(label);
 	}
 	
 	@GetMapping("/username/available/@{username}")
 	public boolean checkAvaiable(@PathVariable String username) {
-		return !userService.findUser(username.replace("{", "").replace("}", ""));
+		return !userService.findUser(username);
 	}
 	@GetMapping("/username/exists/@{username}")
 	public boolean checkExists(@PathVariable String username) {
-		return userService.findUser(username.replace("{", "").replace("}", ""));
+		return userService.findUser(username);
 	}
 	
 	

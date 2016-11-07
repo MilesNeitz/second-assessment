@@ -44,6 +44,8 @@ public class Tweet implements Comparable<Tweet>  {
 	@ManyToMany
 	private List<User> likes;
 	
+	private Boolean deleted = false;
+	
 	@Override     
 	public int compareTo(Tweet tweet) {
 		// a nested if statement to return -1 if before then time 0 if same time and 1 if after
@@ -128,6 +130,14 @@ public class Tweet implements Comparable<Tweet>  {
 
 	public void setMention(List<User> mentions) {
 		this.mentions = mentions;
+	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }

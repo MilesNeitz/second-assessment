@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.classes.NewTweet;
+import com.cooksys.classes.PatchUser;
 import com.cooksys.entity.Tweet;
 import com.cooksys.entity.User;
 import com.cooksys.service.TweetService;
@@ -32,7 +34,9 @@ public class UsersController {
 	
 	@GetMapping()
 	public List<User> getUsers() {
-		return userService.findAll();
+		List<User> users = userService.findAll();
+		users.removeIf(user -> user.getDeleted());
+		return users;
 	}
 	
 	@GetMapping("/@{username}")
@@ -117,4 +121,16 @@ public class UsersController {
 		}
 	}
 	
+	@PatchMapping("/@{username}")
+	public User postSimpleTweet(@RequestBody PatchUser patchUser) {
+		User user = userService.checkPassword(patchUser.getUsername(), patchUser.getPassword());
+		if (user != null){
+			if (patchUser.getFirstName() != null) user.setFirstName(patchUser.getFirstName());
+			if (patchUser.getLastName() != null) user.setLastName(patchUser.getLastName());
+			if (patchUser.getEmail() != null) user.setEmail(patchUser.getEmail());
+			if (patchUser.getPhone() != null) user.setPhone(patchUser.getPhone());
+			user = userService.add(user);
+		}
+		return user;
+	}
 }
