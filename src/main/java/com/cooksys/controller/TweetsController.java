@@ -3,6 +3,7 @@ package com.cooksys.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.classes.NewTweet;
+import com.cooksys.classes.PatchUser;
 import com.cooksys.entity.Context;
 import com.cooksys.entity.Hashtag;
 import com.cooksys.entity.Tweet;
@@ -182,6 +184,17 @@ public class TweetsController {
 		}
 		tweet = tweetService.addTweet(tweet);
 		return tweet;
+	}
+	
+	@DeleteMapping("/{id}")
+	public User deleteUser(@PathVariable Long id, @RequestBody PatchUser patchUser) {
+		User user = userService.checkPassword(patchUser.getUsername(), patchUser.getPassword());
+		Tweet tweet = tweetService.getTweet(id);
+		if (user != null && tweet != null){
+			tweet.setDeleted(true);
+			tweet = tweetService.addTweet(tweet);
+		}
+		return user;
 	}
 	
 	private Tweet sortContent(NewTweet newTweet, Tweet tweet){
