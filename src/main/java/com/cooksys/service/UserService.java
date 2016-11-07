@@ -43,5 +43,9 @@ public class UserService {
 	public User getUserByUsername(String username) {
 		return userRepo.findByUsername(username);
 	}
+
+	public List<User> findByFollowing(User user) {
+		return userRepo.findByFollowing(user);
+	}
 	
 }

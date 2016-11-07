@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.classes.NewTweet;
+import com.cooksys.entity.Context;
 import com.cooksys.entity.Hashtag;
 import com.cooksys.entity.Tweet;
 import com.cooksys.entity.User;
@@ -55,8 +56,17 @@ public class TweetsController {
 	}
 	
 	@GetMapping("/{id}/context")
-	public String getContext(@PathVariable Long id) {
-		return (tweetService.getTweet(id)).getContent();
+	public Context getContext(@PathVariable Long id) {
+		Context context = new Context();
+		Tweet target = tweetService.getTweet(id);
+		
+		context.setTarget(target);
+		
+		context.setBefore(context.getBefore());
+
+		context.setAfter(context.getAfter(tweetService));
+		
+		return context;
 	}
 	
 	@GetMapping("/{id}/replies")
